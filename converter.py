@@ -5,21 +5,23 @@ import random
 
 
 class LoadData:
-    file_text = ''
+
+    text = []
 
     def pdf_loader(self, file):
         data = PyPDF2.PdfFileReader(file)
-        txt = []
+
         for i in range(data.getNumPages()):
             page = data.getPage(i)
-            txt.append(page.extractText().split('\n'))
-        return txt
+            self.text.append(page.extractText().split('\n'))
+        return self.text
 
-    def text_loader(self, file, page):
-        data = PyPDF2.PdfFileReader(file)
-        selected_page = data.getPage(page)
-        text = selected_page.extractText()
-        return text
+    def text_loader(self, file):
+        with open(file, 'r') as f:
+            for txt in f.readlines():
+                self.text.append(txt.split('\n'))
+        return self.text
+
 
 
 class AudioConverter:

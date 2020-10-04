@@ -1,15 +1,16 @@
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.filemanager import MDFileManager
+from kivymd.uix.list import OneLineIconListItem, IconLeftWidget
 from kivy.uix.button import ButtonBehavior
 from kivymd.uix.boxlayout import BoxLayout
 from kivy.animation import Animation
 from kivy.uix.popup import Popup
 from kivy.uix.image import Image
 from kivy.clock import Clock, mainthread
+from threading import Thread
 import time
-
-
+import os
 from converter import LoadData, AudioConverter
 
 
@@ -27,14 +28,14 @@ class AudioWindow(BoxLayout):
     def __init__(self, **kwargs):
         super(AudioWindow, self).__init__(**kwargs)
 
-        Clock.schedule_interval(self.blinker, 2)
-
         self.fm = None
         self.pop = None
+        self.converted()
 
     def blinker(self, dt=0):
         blink = self.ids.blink
-        anim = Animation(size=[180, 180], t='out_quad', d=1, opacity=1) + Animation(size=[230, 230], t='out_quad', opacity=0.7, d=1)
+        anim = Animation(size=[180, 180], t='out_quad', d=1, opacity=1) + Animation(size=[230, 230], t='out_quad',
+                                                                                    opacity=0.7, d=1)
         anim.start(blink)
 
     def load_pdf_file(self):
@@ -65,30 +66,53 @@ class AudioWindow(BoxLayout):
         _box = LoadPdf()
         _box.ids.image_path.text = path
         self.pop = Popup(
-                content=_box,
-                background='',
-                size_hint=(0.6, 0.8))
+            content=_box,
+            background='',
+            size_hint=(0.6, 0.8))
         self.pop.open()
 
     def exit_manager(self, *args):
         self.fm.close()
 
-    def text_to_audio(self):
-        pass
-
     def complete(self, dt=0):
         self.ids.s_manager.current = 'upload'
 
-    def pdf_to_audio(self):
+    # @mainthread
+    def document_to_audio(self):
+        to_upload = None
         pload = LoadData()
         audio = AudioConverter()
-        to_upload = pload.pdf_loader(self.file)
+        if self.file.endswith('.pdf'):
+            to_upload = pload.pdf_loader(self.file)
+        else:
+            to_upload = pload.text_loader(self.file)
         start = time.time()
         audio.generate_audio(to_upload)
         finish = time.time()
         duration = finish - start
-        toast(f'File saved in {self.file}')
+        toast(f'File saved in {os.getcwd()}')
         Clock.schedule_once(self.complete, duration)
+
+    def action1(self):
+        self.pop.dismiss()
+        self.fm.close()
+        self.loading()
+
+    def action(self):
+        self.ids.start_gen.text = "generating audio..."
+        # self.ids.spin.active = True
+        Clock.schedule_interval(self.blinker, 2)
+        self.ids.message.text = 'This might take several minutes depending on file size'
+
+    def converted(self):
+        path = r"C:\Users\lazar\Desktop\kivy\tts"
+        for b, n, p in os.walk(path):
+            for m in p:
+                if m.endswith(".mp3"):
+                    lst = OneLineIconListItem(text=m, on_release=lambda x: toast(path))
+                    img = IconLeftWidget(icon='music')
+                    lst.add_widget(img)
+                    self.ids.converted_list.add_widget(lst)
 
 
 class MainApp(MDApp):

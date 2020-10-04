@@ -1,78 +1,101 @@
+#:import Thread threading.Thread
 <AudioWindow>:
     orientation: 'vertical'
-    ScreenManager:
-        id: s_manager
-        Screen:
-            name: 'upload'
-            BoxLayout:
-                orientation: 'vertical'
+    NavigationLayout:
+        ScreenManager:
+            id: s_manager
+            Screen:
+                name: 'upload'
+                BoxLayout:
+                    orientation: 'vertical'
+                    WhiteBox:
+                        size_hint_y: .5
+                        Image:
+                            source: 'assets/upload.png'
+                    WhiteBox:
+                        size_hint_y: .1
+                    WhiteBox:
+                        size_hint_y: .2
+                        ImageButton:
+                            id: load_pdf
+                            source: 'assets/pdf.png'
+                            pos_hint: {'y': .5}
+                            on_release: root.load_pdf_file()
+                        ImageButton:
+                            id: load_txt
+                            source: 'assets/text.png'
+                            pos_hint: {'y': .5}
+                            on_release: root.load_txt_file()
+                    WhiteBox:
+                        size_hint_y: .05
+                    WhiteBox:
+                        size_hint_y: .1
+                        Widget:
+                        MDFillRoundFlatButton:
+                            text: 'CANCEL'
+                            text_color: 1,0,0,1
+                            md_bg_color: 1,1,1,1
+                            background_normal: ''
+                            padding: 20
+                        Widget:
+                    WhiteBox:
+                        size_hint_y: .05
+            Screen:
+                name: 'loading'
+                id: screen2
                 WhiteBox:
-                    size_hint_y: .5
-                    Image:
-                        source: 'assets/upload.png'
-                WhiteBox:
-                    size_hint_y: .1
-                WhiteBox:
-                    size_hint_y: .2
-                    ImageButton:
-                        id: load_pdf
-                        source: 'assets/pdf.png'
-                        pos_hint: {'y': .5}
-                        on_release: root.load_pdf_file()
-                    ImageButton:
-                        id: load_txt
-                        source: 'assets/text.png'
-                        pos_hint: {'y': .5}
-                        on_release: root.load_txt_file()
-                WhiteBox:
-                    size_hint_y: .05
-                WhiteBox:
-                    size_hint_y: .1
-                    Widget:
-                    MDFillRoundFlatButton:
-                        text: 'CANCEL'
-                        text_color: 1,0,0,1
-                        md_bg_color: 1,1,1,1
-                        background_normal: ''
-                        padding: 20
-                    Widget:
-                WhiteBox:
-                    size_hint_y: .05
-        Screen:
-            name: 'loading'
-            id: screen2
-            WhiteBox:
-                orientation: 'vertical'
-                WhiteBox:
-                    size_hint_y: .1
-                    MDIconButton:
-                        icon: 'close'
-                        on_release: s_manager.current = "upload"
-                Label:
-                    text: 'generating audio...'
-                    color: 0,0,1,1
-                    font_size: 20
-                    bold: True
-                    size_hint_y: .1
-                WhiteBox:
-                    size_hint_y: .2
-                WhiteBox:
-                    size_hint_y: .5
-                    Widget:
-                    Image:
-                        id: blink
-                        source: 'assets/blink2.png'
-                        size_hint: None, None
-                        size: 200, 200
-                        pos_hint: {'y': .5}
-                    Widget:
-                WhiteBox:
-                    padding: 0,0,0,20
-                    size_hint_y: .1
+                    orientation: 'vertical'
+                    WhiteBox:
+                        size_hint_y: .1
+                        MDIconButton:
+                            icon: 'close'
+                            on_release: s_manager.current = "upload"
+                    MDTextButton:
+                        id: start_gen
+                        text: 'Click to start'
+                        on_release: root.document_to_audio()
+                        on_release: root.action()
+                        pos_hint: {'x': .4}
+                        custom_color: 0,0,1,1
+                        font_size: 20
+                        bold: True
+                        size_hint_y: .1
+                    WhiteBox:
+                        size_hint_y: .2
+                    WhiteBox:
+                        size_hint_y: .5
+                        Widget:
+                        Image:
+                            id: blink
+                            source: 'assets/blink2.png'
+                            size_hint: None, None
+                            size: 200, 200
+                            pos_hint: {'y': .5}
+                        Widget:
+                    WhiteBox:
+                        padding: 0,0,0,20
+                        size_hint_y: .1
 
-                    Label:
-                        text: 'This might take several minutes depending on file size'
-                        color: 0,0,0,1
+                        Label:
+                            id: message
+                            text: ''
+                            color: 0,0,0,1
+        MDNavigationDrawer:
+            BoxLayout:
+                orientation: "vertical"
+                BoxLayout:
+                    size_hint_y: .4
+                    orientation: 'vertical'
+                    MDSpinner:
+                        id: spin
+                        size_hint: None, None
+                        size: dp('60'), dp('60')
+                        pos_hint: {'x': .4, 'y': .5}
+                        active: True
+                BoxLayout:
+                    size_hint_y: .6
+                    orientation: 'vertical'
+                    id: converted_list
 
 <WhiteBox@BoxLayout>:
     canvas.before:
@@ -90,13 +113,6 @@
             padding: 10
             Image:
                 source: 'assets/pf.png'
-            MDTextField:
-                id: page_no
-                text: '22'
-                hint_text: 'Enter target Page Number to Process'
-                halign: 'center'
-                input_filter: 'int'
-                required: True
         Label:
             id: image_path
             size_hint_y: .2
@@ -112,10 +128,8 @@
             Widget:
             MDRoundFlatButton:
                 text: 'Confirm'
-                on_release: app.root.ids.s_manager.current = 'loading'
-                on_release: app.root.pop.dismiss()
-                on_release: app.root.fm.close()
-                on_release: app.root.pdf_to_audio()
+#                on_press: app.root.action()
+                on_press: app.root.action1()
 
         WhiteBox:
             size_hint_y: .1

@@ -1,0 +1,121 @@
+<AudioWindow>:
+    orientation: 'vertical'
+    ScreenManager:
+        id: s_manager
+        Screen:
+            name: 'upload'
+            BoxLayout:
+                orientation: 'vertical'
+                WhiteBox:
+                    size_hint_y: .5
+                    Image:
+                        source: 'assets/upload.png'
+                WhiteBox:
+                    size_hint_y: .1
+                WhiteBox:
+                    size_hint_y: .2
+                    ImageButton:
+                        id: load_pdf
+                        source: 'assets/pdf.png'
+                        pos_hint: {'y': .5}
+                        on_release: root.load_pdf_file()
+                    ImageButton:
+                        id: load_txt
+                        source: 'assets/text.png'
+                        pos_hint: {'y': .5}
+                        on_release: root.load_txt_file()
+                WhiteBox:
+                    size_hint_y: .05
+                WhiteBox:
+                    size_hint_y: .1
+                    Widget:
+                    MDFillRoundFlatButton:
+                        text: 'CANCEL'
+                        text_color: 1,0,0,1
+                        md_bg_color: 1,1,1,1
+                        background_normal: ''
+                        padding: 20
+                    Widget:
+                WhiteBox:
+                    size_hint_y: .05
+        Screen:
+            name: 'loading'
+            id: screen2
+            WhiteBox:
+                orientation: 'vertical'
+                WhiteBox:
+                    size_hint_y: .1
+                    MDIconButton:
+                        icon: 'close'
+                        on_release: s_manager.current = "upload"
+                Label:
+                    text: 'generating audio...'
+                    color: 0,0,1,1
+                    font_size: 20
+                    bold: True
+                    size_hint_y: .1
+                WhiteBox:
+                    size_hint_y: .2
+                WhiteBox:
+                    size_hint_y: .5
+                    Widget:
+                    Image:
+                        id: blink
+                        source: 'assets/blink2.png'
+                        size_hint: None, None
+                        size: 200, 200
+                        pos_hint: {'y': .5}
+                    Widget:
+                WhiteBox:
+                    padding: 0,0,0,20
+                    size_hint_y: .1
+
+                    Label:
+                        text: 'This might take several minutes depending on file size'
+                        color: 0,0,0,1
+
+<WhiteBox@BoxLayout>:
+    canvas.before:
+        Color:
+            rgba: 1,1,1,1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<LoadPdf>:
+    WhiteBox:
+        orientation: 'vertical'
+        WhiteBox:
+            size_hint_y: .4
+            padding: 10
+            Image:
+                source: 'assets/pf.png'
+            MDTextField:
+                id: page_no
+                text: '22'
+                hint_text: 'Enter target Page Number to Process'
+                halign: 'center'
+                input_filter: 'int'
+                required: True
+        Label:
+            id: image_path
+            size_hint_y: .2
+            text: ''
+            color: 0,.8,0,1
+        WhiteBox:
+            size_hint_y: .1
+        WhiteBox:
+            size_hint_y: .2
+            MDRoundFlatButton:
+                text: 'Cancel'
+                on_release: app.root.pop.dismiss()
+            Widget:
+            MDRoundFlatButton:
+                text: 'Confirm'
+                on_release: app.root.ids.s_manager.current = 'loading'
+                on_release: app.root.pop.dismiss()
+                on_release: app.root.fm.close()
+                on_release: app.root.pdf_to_audio()
+
+        WhiteBox:
+            size_hint_y: .1

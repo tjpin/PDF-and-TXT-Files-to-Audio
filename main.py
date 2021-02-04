@@ -24,12 +24,13 @@ class ImageButton(ButtonBehavior, Image):
 
 class AudioWindow(BoxLayout):
     file = ''
+    fm = None
+    pop = None
+    path = r'\Users\<...>\Desktop'
 
     def __init__(self, **kwargs):
         super(AudioWindow, self).__init__(**kwargs)
 
-        self.fm = None
-        self.pop = None
         self.converted()
 
     def blinker(self, dt=0):
@@ -39,24 +40,22 @@ class AudioWindow(BoxLayout):
         anim.start(blink)
 
     def load_pdf_file(self):
-        path = r'\Users\lazar\Desktop'
         self.fm = MDFileManager(
             exit_manager=self.exit_manager,
             select_path=self.select_path,
             search='all',
             ext=[".pdf"],
         )
-        self.fm.show(path)
+        self.fm.show(self.path)
 
     def load_txt_file(self):
-        path = r'\Users\lazar\Desktop'
         self.fm = MDFileManager(
             exit_manager=self.exit_manager,
             select_path=self.select_path,
             search='all',
             ext=[".txt"],
         )
-        self.fm.show(path)
+        self.fm.show(self.path)
 
     def loading(self):
         self.ids.s_manager.current = 'loading'
@@ -105,7 +104,7 @@ class AudioWindow(BoxLayout):
         self.ids.message.text = 'This might take several minutes depending on file size'
 
     def converted(self):
-        path = r"C:\Users\lazar\Desktop\kivy\tts"
+        path = r"C:\Users\<converted files path\>"
         for b, n, p in os.walk(path):
             for m in p:
                 if m.endswith(".mp3"):

@@ -1,3 +1,6 @@
+__Author__ = "Chairman"
+__Version__ = "0.1"
+
 from kivymd.app import MDApp
 from kivymd.toast import toast
 from kivymd.uix.filemanager import MDFileManager

@@ -6,21 +6,20 @@ import random
 
 class LoadData:
 
-    text = []
+    text = ""
 
     def pdf_loader(self, file):
         data = PyPDF2.PdfFileReader(file)
 
         for i in range(data.getNumPages()):
             page = data.getPage(i)
-            self.text.append(page.extractText().split('\n'))
+            self.text.join(page.extractText().split())
         return self.text
 
     def text_loader(self, file):
         with open(file, 'r') as f:
             for txt in f.readlines():
-                self.text.append(txt.split('\n'))
-        return self.text
+                self.text.join(txt.split())
 
 
 
